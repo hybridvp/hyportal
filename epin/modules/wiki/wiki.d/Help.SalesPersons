@@ -1,0 +1,15 @@
+version=pmwiki-2.2.0-beta65 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (Windows NT 5.1; rv:2.0b9) Gecko/20100101 Firefox/4.0b9
+author=Laolu Olapegba
+charset=ISO-8859-1
+csum=
+ctime=1296063134
+host=127.0.0.1
+name=Help.SalesPersons
+rev=1
+targets=
+text=%0a!!! Purpose%0a%0a%0aHere you can add/edit and delete your sales persons details. Also you can add a 2 level Provision / commission for each one of them.%0a%0a!!! Procedure%0a%0a%0aRegarding "Provision" Function: If you have Sales Persons that get provision (commission) on what they sell, e.g.10%25 (Provision) of sales up to N2000 (Break Pt.) and then a lower or higher percent (Provision 2) of the rest the sales person sales.%0a%0aIf you check the check box "Show also Inactive" an extra column will appear in the table to give you the ability to inactivate an active sales person or activate an active one.%0a%0a!!! Tips and Tricks%0a%0a%0aYou can set the values as 0 if you do not intend to use them.%0a
+time=1296063134
+author:1296063134=Laolu Olapegba
+diff:1296063134:1296063134:=1,17d0%0a%3c %0a%3c !!! Purpose%0a%3c %0a%3c %0a%3c Here you can add/edit and delete your sales persons details. Also you can add a 2 level Provision / commission for each one of them.%0a%3c %0a%3c !!! Procedure%0a%3c %0a%3c %0a%3c Regarding "Provision" Function: If you have Sales Persons that get provision (commission) on what they sell, e.g.10%25 (Provision) of sales up to N2000 (Break Pt.) and then a lower or higher percent (Provision 2) of the rest the sales person sales.%0a%3c %0a%3c If you check the check box "Show also Inactive" an extra column will appear in the table to give you the ability to inactivate an active sales person or activate an active one.%0a%3c %0a%3c !!! Tips and Tricks%0a%3c %0a%3c %0a%3c You can set the values as 0 if you do not intend to use them.%0a
+host:1296063134=127.0.0.1

@@ -1,0 +1,206 @@
+DROP TABLE IF EXISTS simplexaccount.0_purch_req_details;
+CREATE TABLE  simplexaccount.0_purch_req_details 
+(
+  pr_detail_item int(11) NOT NULL AUTO_INCREMENT,
+  
+   pr_no int(11) NOT NULL DEFAULT '0',
+  
+   item_code varchar(20) NOT NULL DEFAULT '',
+  
+   description tinytext,
+  
+   delivery_date date NOT NULL DEFAULT '0000-00-00',
+  
+   qty_invoiced double NOT NULL DEFAULT '0',
+  
+   unit_price double NOT NULL DEFAULT '0',
+  
+   act_price double NOT NULL DEFAULT '0',
+  
+   std_cost_unit double NOT NULL DEFAULT '0',
+  
+   quantity_ordered double NOT NULL DEFAULT '0',
+  
+   quantity_received double NOT NULL DEFAULT '0',
+  
+PRIMARY KEY (pr_detail_item)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS simplexaccount.0_purch_reqs;
+CREATE TABLE  simplexaccount.0_purch_reqs 
+(
+   pr_no int(11) NOT NULL AUTO_INCREMENT,
+  
+    supplier_id int(11) NOT NULL DEFAULT '0',
+  
+    comments tinytext,
+  ord_date date NOT NULL DEFAULT '0000-00-00',
+  
+    reference tinytext NOT NULL,
+  requisition_no tinytext,
+  
+    into_stock_location varchar(5) NOT NULL DEFAULT '',
+  
+    delivery_address tinytext NOT NULL,
+  
+PRIMARY KEY (pr_no)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+
+
+
+DROP TABLE IF EXISTS simplexaccount.0_ourrefs;
+
+
+CREATE TABLE  simplexaccount.0_ourrefs 
+(
+  
+id int(11) NOT NULL DEFAULT '0',
+  
+type int(11) NOT NULL DEFAULT '0',
+  
+reference varchar(100) NOT NULL DEFAULT '',
+  
+PRIMARY KEY (id,type)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+DROP TABLE IF EXISTS simplexaccount.0_oursys_types;
+
+CREATE TABLE  simplexaccount.0_oursys_types 
+(
+  type_id smallint(6) NOT NULL DEFAULT '0',
+  
+   type_no int(11) NOT NULL DEFAULT '1',
+  
+   next_reference varchar(100) NOT NULL DEFAULT '',
+  
+PRIMARY KEY (type_id)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+CREATE TABLE  simplexaccount.0_debtor_pay_advice 
+(
+  
+trans_no int(11) unsigned NOT NULL DEFAULT '0',
+  
+type smallint(6) unsigned NOT NULL DEFAULT '0',
+  
+version tinyint(1) unsigned NOT NULL DEFAULT '0',
+  
+debtor_no int(11) unsigned DEFAULT NULL,
+  
+branch_code int(11) NOT NULL DEFAULT '-1',
+  
+tran_date date NOT NULL DEFAULT '0000-00-00',
+  
+due_date date NOT NULL DEFAULT '0000-00-00',
+  
+reference varchar(60) NOT NULL DEFAULT '',
+  
+tpe int(11) NOT NULL DEFAULT '0',
+  
+order_ int(11) NOT NULL DEFAULT '0',
+  
+ov_amount double NOT NULL DEFAULT '0',
+  
+ov_gst double NOT NULL DEFAULT '0',
+  
+ov_freight double NOT NULL DEFAULT '0',
+  
+ov_freight_tax double NOT NULL DEFAULT '0',
+  
+ov_discount double NOT NULL DEFAULT '0',
+  
+alloc double NOT NULL DEFAULT '0',
+  
+rate double NOT NULL DEFAULT '1',
+  
+ship_via int(11) DEFAULT NULL,
+  
+trans_link int(11) NOT NULL DEFAULT '0',
+  
+dimension_id int(11) NOT NULL DEFAULT '0',
+  
+dimension2_id int(11) NOT NULL DEFAULT '0',
+created_by varchar(128),
+
+created_date    datetime,
+approved_by   varchar(128),
+approved_date    datetime, 
+PRIMARY KEY (trans_no,type),
+  
+KEY debtor_no (debtor_no,branch_code)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+
+
+ALTER TABLE simplexaccount.0_sales_orders 
+ADD COLUMN ourorder_status VARCHAR(45) NOT NULL DEFAULT 'Planned' A
+FTER delivery_date;
+
+
+DROP TABLE IF EXISTS simplexaccount.0_debtors_terms_requests;
+
+DROP TABLE IF EXISTS simplexaccount.0_debtors_terms_requests;
+CREATE TABLE  simplexaccount.0_debtors_terms_requests 
+(
+  debtor_no varchar(40) NOT NULL DEFAULT '0',
+  
+name varchar(100) NOT NULL DEFAULT '',
+  debtor_ref varchar(30) NOT NULL,
+  
+address tinytext,
+  email varchar(100) NOT NULL DEFAULT '',
+  
+tax_id varchar(55) NOT NULL DEFAULT '',
+  curr_code char(3) NOT NULL DEFAULT '',
+  
+sales_type int(10) DEFAULT NULL,
+  dimension_id int(11) NOT NULL DEFAULT '0',
+  
+dimension2_id int(11) NOT NULL DEFAULT '0',
+  credit_status int(11) NOT NULL DEFAULT '0',
+  
+payment_terms int(11) DEFAULT NULL,
+  discount double NOT NULL DEFAULT '0',
+  
+pymt_discount double NOT NULL DEFAULT '0',
+  credit_limit float NOT NULL DEFAULT '1000',
+  
+notes tinytext NOT NULL,
+  inactive tinyint(1) NOT NULL DEFAULT '0',
+  request_id int(11) NOT NULL AUTO_INCREMENT,
+  requested_by varchar(128) DEFAULT NULL,
+  created_date datetime DEFAULT NULL,
+  approved_by varchar(128) DEFAULT NULL,
+  approved_date datetime DEFAULT NULL,
+  request_status varchar(45) NOT NULL DEFAULT 'Planned',
+  PRIMARY KEY (request_id)
+) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;;
+
+
+CREATE TABLE  simplexaccount.0_pay_advice
+(
+id int(11) NOT NULL AUTO_INCREMENT,
+type smallint(6) DEFAULT 12,
+trans_no int(11) DEFAULT NULL,
+bank_act varchar(64) DEFAULT NULL,
+ref varchar(40) DEFAULT NULL,
+trans_date date NOT NULL DEFAULT '0000-00-00',
+amount double DEFAULT NULL,
+dimension_id int(11) NOT NULL DEFAULT '0',
+dimension2_id int(11) NOT NULL DEFAULT '0',
+person_type_id int(11) NOT NULL DEFAULT '0',
+person_id varchar(64),
+reconciled date DEFAULT NULL,
+created_by varchar(64) DEFAULT NULL,
+created_date date NOT NULL DEFAULT '0000-00-00',
+note  varchar(128) DEFAULT NULL,
+confirmed_by varchar(64) DEFAULT NULL,
+confirmed_date date NOT NULL DEFAULT '0000-00-00',
+PRIMARY KEY (id),
+  KEY bank_act (bank_act,ref),
+  KEY type (type,trans_no)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1
+

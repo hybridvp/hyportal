@@ -1,0 +1,5 @@
+update 0_sales_orders set ourorder_status = 'InvoicedClosed'
+where exists (select 1 from 0_sales_order_details
+where 0_sales_orders.order_no = 0_sales_order_details.order_no
+and 0_sales_orders.trans_type = 0_sales_order_details.trans_type
+and qty_sent = quantity) ;

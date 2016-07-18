@@ -1,0 +1,15 @@
+version=pmwiki-2.2.0-beta65 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/534.13 (KHTML, like Gecko) Chrome/9.0.597.98 Safari/534.13
+author=laolu olapegba
+charset=ISO-8859-1
+csum=
+ctime=1298415547
+host=127.0.0.1
+name=Help.DealerGPGKeys
+rev=1
+targets=
+text=!! Here you can add or modify Dealer PGP Keys.%0a%0aClick the ''Browse'' botton to Choose the Dealer's PGP file from your local machine%0a%0aNext Select ''Upload'' botton to upload the file.%0a%0a%0a'''Warning!'''''Emphasized'' %0aThe Filename must not contain spaces or special characters.%0aThe PGP key must not contain multiple emails
+time=1298415547
+author:1298415547=laolu olapegba
+diff:1298415547:1298415547:=1,10d0%0a%3c !! Here you can add or modify Dealer PGP Keys.%0a%3c %0a%3c Click the ''Browse'' botton to Choose the Dealer's PGP file from your local machine%0a%3c %0a%3c Next Select ''Upload'' botton to upload the file.%0a%3c %0a%3c %0a%3c '''Warning!'''''Emphasized'' %0a%3c The Filename must not contain spaces or special characters.%0a%3c The PGP key must not contain multiple emails%0a\ No newline at end of file%0a
+host:1298415547=127.0.0.1

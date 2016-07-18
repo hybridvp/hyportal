@@ -1,0 +1,32 @@
+<input type=button onClick=window.open("window-child2.html","Ratting","width=550,height=170,
+left=150,top=200,toolbar=0,status=0,"); value="Open Window"> 
+
+The code of the child window is here 
+
+<html>
+<head>
+<title>(Type a title for your page here)</title>
+
+<SCRIPT language=JavaScript>
+<!-- 
+function win(){
+window.opener.location.href="window-refreshing.php";
+self.close();
+//-->
+}
+</SCRIPT>
+
+
+</head>
+
+
+<body bgcolor="#ffffff" >
+
+
+<font face='Verdana' size='2' >This is the child window opened . Click the button below to close this window and refresh the main window</font>
+<br><br>
+<center><input type=button onClick="win();" value="Close this window"></center>
+
+
+</body> 
+</html>

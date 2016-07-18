@@ -1,0 +1,18 @@
+version=pmwiki-2.2.0-beta65 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (Windows NT 5.1; rv:2.0b11) Gecko/20100101 Firefox/4.0b11
+author=Laolu Olapegba
+charset=ISO-8859-1
+csum=
+ctime=1299027299
+host=127.0.0.1
+name=Help.InventoryItemStatus
+rev=2
+targets=
+text='''Purpose'''%0a%0a'''To be done'''%0a%0a'''Procedure'''%0a%0a'''Tips and Tricks'''%0aDemand Quantity is the total quantity of unfulfilled orders.%0aQuantity on hand is the total quantity of items in the Warehouse.%0aAvailable = QOH minus Demand
+time=1299027337
+author:1299027337=Laolu Olapegba
+diff:1299027337:1299027299:=2d1%0a%3c %0a4d2%0a%3c %0a6d3%0a%3c %0a
+host:1299027337=127.0.0.1
+author:1299027299=Laolu Olapegba
+diff:1299027299:1299027299:=1,7d0%0a%3c '''Purpose'''%0a%3c '''To be done'''%0a%3c '''Procedure'''%0a%3c '''Tips and Tricks'''%0a%3c Demand Quantity is the total quantity of unfulfilled orders.%0a%3c Quantity on hand is the total quantity of items in the Warehouse.%0a%3c Available = QOH minus Demand%0a\ No newline at end of file%0a
+host:1299027299=127.0.0.1

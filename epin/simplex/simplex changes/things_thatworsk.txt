@@ -1,0 +1,19 @@
+after labouring on some of this things as an amateur, I decided to start writing that 
+what works in php.
+
+1. to close a window automatically use 
+echo "<script> self.close(); </script>";
+
+2. Close a window and refresh/open url on the parent window
+echo "<script> window.opener.location.href='".$path_to_root."'; self.close(); </script>";
+
+3. The backslash (\) is the escape character, so \" is an escaped double quote 
+
+4. these were decommissioned
+//hyperlink_back();
+//echo "<p><a href='javascript:closeThis()'>Close Window</a></p>";
+//echo "<script> window.opener.location.href='".$path_to_root."'; self.close(); </script>";
+
+
+
+//echo '<center><input type=button onClick="window.opener.location.href=\''.$path_to_root.'\';self.close()" value="Close this window"></center>';

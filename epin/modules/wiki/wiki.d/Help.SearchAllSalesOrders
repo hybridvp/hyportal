@@ -1,0 +1,15 @@
+version=pmwiki-2.2.0-beta65 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (Windows NT 5.1; rv:2.0b9) Gecko/20100101 Firefox/4.0b9
+author=Laolu Olapegba
+charset=ISO-8859-1
+csum=
+ctime=1296063396
+host=127.0.0.1
+name=Help.SearchAllSalesOrders
+rev=1
+targets=
+text=%0a!!! Purpose%0a%0a%0aThis Inquiry shows the Sales Orders for a given period. You have the option to look at an entire Quotation, Mark a Sales Order to be a Template for Deliveries/Invoices, edit an Order and print an Order.%0a%0a!!! Procedure%0a%0a%0aYou can extend the period or minimize the period or filter the Inquiry by Location and/or Item.%0a%0aThe Sales Orders can however be deleted when editing. And when deleting a fiscal year, the Orders inside the fiscal year will be deleted.%0a%0a!!! Tips and Tricks%0a%0a
+time=1296063396
+author:1296063396=Laolu Olapegba
+diff:1296063396:1296063396:=1,15d0%0a%3c %0a%3c !!! Purpose%0a%3c %0a%3c %0a%3c This Inquiry shows the Sales Orders for a given period. You have the option to look at an entire Quotation, Mark a Sales Order to be a Template for Deliveries/Invoices, edit an Order and print an Order.%0a%3c %0a%3c !!! Procedure%0a%3c %0a%3c %0a%3c You can extend the period or minimize the period or filter the Inquiry by Location and/or Item.%0a%3c %0a%3c The Sales Orders can however be deleted when editing. And when deleting a fiscal year, the Orders inside the fiscal year will be deleted.%0a%3c %0a%3c !!! Tips and Tricks%0a%3c %0a
+host:1296063396=127.0.0.1

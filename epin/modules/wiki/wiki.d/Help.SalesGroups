@@ -1,0 +1,16 @@
+version=pmwiki-2.2.0-beta65 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (Windows NT 5.1; rv:2.0b9) Gecko/20100101 Firefox/4.0b9
+author=Laolu Olapegba
+charset=ISO-8859-1
+csum=Sales Group
+ctime=1296062694
+host=127.0.0.1
+name=Help.SalesGroups
+rev=1
+targets=
+text=Purpose%0a%0aDefine customer groupings and/or classifications. This is useful for tracking sales figures for a particular sub-set of your customer base. This may be something as simple as:%0a%0a    Small%0a    Medium%0a    Large %0a%0a%0a...customers or more complex situations where the type of customer is used.%0a%0aAn example of a more complex customer group for a building supplies company may be:%0a%0a    Small Cabinet Manufacturer%0a    Large Cabinet Manufacturer%0a    Small Furniture Mfg%0a    Large Furniture Mfg%0a    Small General Contractor%0a    Large General Contractor%0a    Retail Customer 
+time=1296062694
+author:1296062694=Laolu Olapegba
+csum:1296062694=Sales Group
+diff:1296062694:1296062694:=1,20d0%0a%3c Purpose%0a%3c %0a%3c Define customer groupings and/or classifications. This is useful for tracking sales figures for a particular sub-set of your customer base. This may be something as simple as:%0a%3c %0a%3c     Small%0a%3c     Medium%0a%3c     Large %0a%3c %0a%3c %0a%3c ...customers or more complex situations where the type of customer is used.%0a%3c %0a%3c An example of a more complex customer group for a building supplies company may be:%0a%3c %0a%3c     Small Cabinet Manufacturer%0a%3c     Large Cabinet Manufacturer%0a%3c     Small Furniture Mfg%0a%3c     Large Furniture Mfg%0a%3c     Small General Contractor%0a%3c     Large General Contractor%0a%3c     Retail Customer %0a\ No newline at end of file%0a
+host:1296062694=127.0.0.1

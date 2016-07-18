@@ -1,0 +1,397 @@
+db_query("insert into track_debug(text_a) values ('here')", " record could not be inserted");
+
+Using $OurRefs
+===========================
+
+Declare as global i.e. global $OurRefs;
+
+
+Do, get next reference from our reference $OurRefs->get_next_simple_ref(ST_PURCHREQ));
+This is usually from the ui php files. Note that ST_PURCHREQ is any transaction types previously defined in simplextypes.inc
+and corresponding transaction table in simplexsystypes.inc and entry made to the systypes table.
+
+Issue $OurRefs->save(ST_PURCHREQ, $pr_obj->order_no, $pr_obj->reference); to save after inserting the record
+into the table usually in your db module.
+
+_________________________________________________________
+
+//Check it is getting here 
+display_notification_centered("back here after a call to handle new order");
+display_error(_("back here after a call to handle new orrder."));
+	set_focus('ref');
+    		return false;
+//
+
+The system uses the references table to store the ref number of PO and other transactions. 
+So, ST_PURCHORDER in PO when being used in PR should be redefined as ST_PURCHREQ
+
+References to be localised requires creation of our own simplex reference class by clonning the available references procedure 
+in the base ERP. However, our class has to be instantiated in the session file as done by the base ERP 
+i.e $OurRefs = new simple_references(). this was added to the class file itself and included in the session.inc file.
+
+
+//Added to session.inc 
+include_once($path_to_root . "/simplex/includes/simplexreferences.inc");
+//to implement our own reference number generation independently,. It also creates the new class $OurRefs
+
+//--
+//   Added for Purchase Requisition in systypes.inc. this is table and important columns information 
+        case     ST_PURCHREQ     : return array("".TB_PREF."purch_reqs", null, "pr_no", "reference", "tran_date");
+//--
+
+//--
+//   Added for Requisition in types.inc now moved to simplextypes, so add similar items in simplextypes
+   define('ST_PURCHREQ', 1001);
+//
+
+// And second addition to the file types.inc now in simplextypes as well, so add similar items in simplextypes
+	ST_PURCHREQ => _("Purchase Requisition"),
+// into array $systypes_array 
+//--
+
+//Added into ui_view.inc for purchase requisition
+
+elseif ($type == ST_PURCHREQ)		
+        $viewer .= "view_pr.php";  
+//
+
+
+case ST_PURCHREQ :   //Added tpo reporting.inc for purchase requisition just after case ST_PURCHORDER :
+
+//---added for purchase requisition entry into array $security_areas in access_level to display the in role creation screen.
+	'SA_PURCHREQ' => array(SS_PURCH|10, _("Purchase requisition entry")),
+        'SA_SOCONFIRM' => array(SS_SALES|11, _("Sales orders confirmation")),
+        'SA_SQCONFIRM' => array(SS_SALES|13, _("Convert Quotation To Order")),
+///////////////////////
+
+//--Page Security in pr_entry_item changed to SA_PURCHREQ. 
+//This ensures that access has to be granted in role for the page to be accessible. this works. 
+//It has to be done for view_pr as well at least for now since the same role should apply to them
+$page_security = 'SA_PURCHREQ';
+/////////////////////////////////////////
+
+
+//Changed ST_PURCHORDER to ST_PURCHREQ in pr_db.php - cloned po_db.php as stated below. 
+//This is to give the purchase requisition its own identify and prevent conflict in the REFs table
+//Also changed all the occurrences of po to pr for more personalisation 
+//order variables still remains with the old names i.e. carrying order or ord. Changes to these may be
+//considered later to further personalise the newly cloned pr module.
+	$Refs->save(ST_PURCHREQ, $pr_obj->order_no, $pr_obj->reference);
+
+
+	add_comments(ST_PURCHREQ, $pr_obj->order_no, $pr_obj->orig_order_date, $pr_obj->Comments);
+
+	add_audit_trail(ST_PURCHREQ, $pr_obj->order_no, $pr_obj->orig_order_date);
+--------------------------------
+
+//Discovered from frontaccounting.php that the menus are stored in php files such as  
+	include_once($path_to_root . '/applications/application.php');
+	include_once($path_to_root . '/applications/customers.php');
+	include_once($path_to_root . '/applications/suppliers.php');
+	include_once($path_to_root . '/applications/inventory.php');
+	include_once($path_to_root . '/applications/manufacturing.php');
+	include_once($path_to_root . '/applications/dimensions.php');
+	include_once($path_to_root . '/applications/generalledger.php');
+	include_once($path_to_root . '/applications/setup.php');
+//
+                //--Added for Purchase Requisition in suppliers.php
+		$this->add_lapp_function(0, _("Purchase &Requisition Entry"),
+			"purchasing/pr_entry_items.php?NewOrder=Yes", 'SA_PURCHREQ');
+		//Changed SA_PURCHASEORDER to SA_PURCHREQ for purchase requisition security to work
+
+//Added the new menu for confirmation of Planned Sales Order
+		$this->add_lapp_function(0, _("Sales Order &Confirmation"),
+			"simplex/sales/inquiry/sales_orders_view.php?type=30", 'SA_SALESTRANSVIEW');
+
+//
+
+--Adding order status to customer or sales order screen
+cart_class.inc
+
+        //Added OurOrder_Status for sales order tracking 
+          var $ourorder_status = "Planned";
+        // end addition 
+
+
+
+//Added in Sales Order UI
+	label_row(_("Order Status:"), ($order->ourorder_status));
+//to show order status 
+	
+
+//added explicitly order status to db
+			db_escape($order->ourorder_status) . ")";
+//
+
+
+//added to Sales Order db to fetch ourorder_status data 
+	$order->ourorder_status = $myrow["ourorder_status"];
+//end here
+
+//it is also require the order status is shown on the view screen or any order details are being displayed.
+//Reference number field moved up above delivery address. and change from rowlabel to cell label to accommodate
+//status as shown below in file view sales order
+start_row();
+label_cells(_("Reference"),    $_SESSION['View']->reference,       "class='tableheader2'");
+label_cells(_("Order Status"), $_SESSION['View']->ourorder_status, "class='tableheader2'");
+
+//label_row(_("Reference"), $_SESSION['View']->reference, "class='tableheader2'", "colspan=3");
+end_row();
+
+
+
+
+---Adding order status to cusomter/sales order summary and views
+		Sum(line.quantity) AS totquantity,
+
+
+//added sorder.ourorder_status in the select clause for order status in summary in sales_order_view.inc
+                sorder.ourorder_status
+
+//added sorder.ourorder_status in the group clause for order status in summary
+	$sql .= " GROUP BY sorder.order_no,
+				sorder.debtor_no,
+				sorder.branch_code,
+				sorder.customer_ref,
+				sorder.ord_date,
+				sorder.deliver_to,
+				sorder.ourorder_status";
+
+
+//added order status to the summary display pagein sales_order_view.php               
+		_("Order Status")
+
+---Now doing the confirmation stuff on the sales order
+	//added $ourcorder to sales_order_entry.php
+	$ourcorder = _("Confirm Order");
+
+//added this to to display Confirm the order
+	   	submit_center_first('ConfirmOrder', $ourcorder,
+	   _('Confirm Order'));
+//it was reporgrammed all together to give this
+	if ($_SESSION['Items']->trans_no == 0) {
+
+		submit_center_first('ProcessOrder', $porder,
+		    _('Check entered data and save document'), 'default');
+		submit_js_confirm('CancelOrder', _('You are about to void this Document.\nDo you want to continue?'));
+	} else {
+      //reprogrammed as if else statement
+      if (1==1) {
+	  //added this to to display Confirm the order
+	  	   	submit_center_first('ConfirmOrder', $ourcorder,
+	  	     _('Confirm Order'), 'default');
+	  	     submit_js_confirm('ConfirmOrder', _('You are about to confirm this sales order.\nDo you want to continue?'));
+	  	    submit_center_last('CancelOrder', $cancelorder,
+	  	     _('Cancels document entry or removes sales order when editing an old document'), 'cancel');
+		     submit_js_confirm('CancelOrder', _('You are about to cancel this sales order.\nDo you want to continue?'));
+      }
+	 else
+	    submit_center_first('ProcessOrder', $corder,
+		    _('Validate changes and update document'), 'default');
+
+	}
+//
+//Here there is the code for the Confirm for now. this was done with a new copy of the sales file
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+//starting a big change from here. It could be moved to inc later
+if (isset($_POST['ConfirmOrder']) && can_process()) {
+	copy_to_cart();
+
+	$modified = ($_SESSION['Items']->trans_no != 0);
+	$so_type = $_SESSION['Items']->so_type;
+	$_SESSION['Items']->write(1);
+	if (count($messages)) { // abort on failure or error messages are lost
+		$Ajax->activate('_page_body');
+		display_footer_exit();
+	}
+	$trans_no = key($_SESSION['Items']->trans_no);
+	$trans_type = $_SESSION['Items']->trans_type;
+	new_doc_date($_SESSION['Items']->document_date);
+	processing_end();
+	if ($modified) {
+		if ($trans_type == ST_SALESQUOTE)
+			meta_forward($_SERVER['PHP_SELF'], "UpdatedQU=$trans_no");
+		else
+			meta_forward($_SERVER['PHP_SELF'], "UpdatedID=$trans_no");
+	} elseif ($trans_type == ST_SALESORDER) {
+		meta_forward($_SERVER['PHP_SELF'], "AddedID=$trans_no");
+	} elseif ($trans_type == ST_SALESQUOTE) {
+		meta_forward($_SERVER['PHP_SELF'], "AddedQU=$trans_no");
+	} elseif ($trans_type == ST_SALESINVOICE) {
+		meta_forward($_SERVER['PHP_SELF'], "AddedDI=$trans_no&Type=$so_type");
+	} else {
+		meta_forward($_SERVER['PHP_SELF'], "AddedDN=$trans_no&Type=$so_type");
+	}
+}
+
+if (isset($_POST['update'])) {
+	$Ajax->activate('items_table');
+}
+----------------------------------------------------------------
+
+//Changes to ensure that confirmed orders cannot be edited i.e. frozen
+//Changed the commit button to save changes in sales_order_entry.php and put an if statement 
+    
+   submit_center('ProcessOrder', _("Save Changes"), true, 'Validate changes and update document', 'default');
+
+	//Added status check for delivery  in sales_orders_view.php
+		$sql .= " AND line.qty_sent < line.quantity AND ourorder_status= 'Confirmed'";
+
+
+//Only confirmed orders are delivered
+
+
+//Added checks to see that the order to be delivered has been confirmed in customer_delivery.php to function check_data() 
+        if (get_order_state($_SESSION['Items']->order_no) != 'Confirmed') 
+	{
+        	display_error(_("Order".$_SESSION['Items']->order_no." has not been confirmed: Order could not be delivered!"));
+        	return false;//not ok
+        }
+///////////////////////////////
+
+// Commented out delivery option after order entry, next step is confirmation in sales_order_entry
+//	submenu_option(_("Make &Delivery Against This Order"),
+//		"/sales/customer_delivery.php?OrderNumber=$order_no");
+
+
+	// Update cart delivery quantities/descriptions
+//Added checks to see that the order to be delivered has been confirmed in customer_delivery.php to  function check_quantities()
+        if (get_order_state($_SESSION['Items']->order_no) != 'Confirmed') 
+	{
+        	display_error(_("Order".$_SESSION['Items']->order_no." has not been confirmed: Order could not be delivered"));
+        	return 0;//not ok
+        }	
+
+//Added ourorder_Status to read planned from quotation
+		$doc->ourorder_status = "Planned_From_Quotation#" . $trans_no;
+
+//Note these definition as well
+define('ST_SALESORDER', 30);
+define('ST_SALESQUOTE', 32);
+define('ST_COSTUPDATE', 35);
+define('ST_DIMENSION', 40);
+
+
+    //Added lines to handle update of sales quotations in Sales Order DB
+	$quotation_no = 0 ;
+	$quotation_trans_type = ST_SALESQUOTE ; //transaction type for sales quotation 
+    if (substr($order->ourorder_status,0,23)== "Planned_From_Quotation#") 
+	{
+		$quotation_no = substr($order->ourorder_status,23,(strlen($order->ourorder_status)-23));
+	    $order->cust_ref .= "/SQ".$quotation_no;
+		$order->ourorder_status = "Planned";
+	}
+	//
+
+//////Added lines to handle update of sales quotations in Sales_order_db.inc
+	$quotation_no = 0 ;
+	$quotation_trans_type = ST_SALESQUOTE ; //transaction type for sales quotation 
+    if (substr($order->ourorder_status,0,23)== "Planned_From_Quotation#") 
+	{
+		$quotation_no = substr($order->ourorder_status,23,(strlen($order->ourorder_status)-23));
+	    $order->cust_ref .= "/SQ".$quotation_no;
+		$order->ourorder_status = "Planned";
+	}
+//////	
+
+//Added update of Sales Quotation from where this order is created from in sales_order_db	
+    if ($quotation_no>0)
+	{
+		$sql = "UPDATE ".TB_PREF."sales_orders set ourorder_status='OrderedClosed'
+				WHERE order_no = " .db_escape($order_no) . " 
+				AND trans_type = " .db_escape($order->trans_type) ;
+				
+	}
+/////////////////////////////////////////////////	
+//----------------------------------------------------------------------------------------------
+//
+//Modified this function in ui_list.inc to show code in addition to name for customer
+//
+function customer_list($name, $selected_id=null, $spec_option=false, $submit_on_change=false, 
+	$show_inactive=false, $editkey = false)
+{
+	global $all_items;
+
+	$sql = "SELECT debtor_no, debtor_ref, curr_code, inactive FROM ".TB_PREF."debtors_master ";
+
+	$mode = get_company_pref('no_customer_list');
+
+	if ($editkey)
+		set_editor('customer', $name, $editkey);
+
+	return combo_input($name, $selected_id, $sql, 'debtor_no', 'name',
+	array(
+	    'format' => '_format_add_curr',
+	    'order' => array('debtor_ref'),
+		'search_box' => true/*$mode!=0*/,
+//
+	'search' => array("debtor_no", "curr_code","debtor_ref"),
+'search_submit' => false/*get_company_pref('no_item_list')!=0*/,
+//
+		'type' => 0,
+		'size' => 20,
+		'spec_option' => $spec_option === true ? _("All Customers") : $spec_option,
+		'spec_id' => $all_items,
+		'select_submit'=> $submit_on_change,
+		'async' => false,
+		'sel_hint' => $mode ? _('Press Space tab to filter by name fragment; F2 - entry new customer') :
+		_('Select customer'),
+		'show_inactive' => $show_inactive
+	) );
+}
+
+////Modified Customer/Debto Master table to make the debtor_no varchar so that it can be captured when new customer is being created.
+
+//Checking login users for logging transactions.
+
+$_SESSION["wa_current_user"]->last_act
+
+
+isset($_SESSION['wa_current_user']->company)
+
+
+$_SESSION['wa_current_user']->loginname 
+
+//Changed Customer/Debtor number to varchar(128) for in Debtor_Master
+
+//It appear when changing table column from integer to varchar, you have to drop and recreate the table especially 
+if it is primary key column
+
+DROP TABLE IF EXISTS simplexaccount.0_sales_orders;
+CREATE TABLE  simplexaccount.0_sales_orders (
+  order_no int(11) NOT NULL,
+  trans_type smallint(6) NOT NULL DEFAULT '30',
+  version tinyint(1) unsigned NOT NULL DEFAULT '0',
+  type tinyint(1) NOT NULL DEFAULT '0',
+  debtor_no varchar(32) DEFAULT NULL,
+  branch_code int(11) NOT NULL DEFAULT '0',
+  reference varchar(100) NOT NULL DEFAULT '',
+  customer_ref tinytext NOT NULL,
+  comments tinytext,
+  ord_date date NOT NULL DEFAULT '0000-00-00',
+  order_type int(11) NOT NULL DEFAULT '0',
+  ship_via int(11) NOT NULL DEFAULT '0',
+  delivery_address tinytext NOT NULL,
+  contact_phone varchar(30) DEFAULT NULL,
+  contact_email varchar(100) DEFAULT NULL,
+  deliver_to tinytext NOT NULL,
+  freight_cost double NOT NULL DEFAULT '0',
+  from_stk_loc varchar(5) NOT NULL DEFAULT '',
+  delivery_date date NOT NULL DEFAULT '0000-00-00',
+  ourorder_status varchar(45) NOT NULL DEFAULT 'Planned',
+  PRIMARY KEY (trans_type,order_no)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+Important Notes:
+_____________________________________
+1. changing data type for column that is part of a primary key or other key (I assumed) requires removing it first from the 
+   key before changing it and adding it back after. Else, it may be required to drop the table and recreate.
+
+2. Where there is a change in data type of a column that is used in other tables without changing the dependent tables will cause mysql to silently insert zero (0) into the dependent table, no error is raised but warning saying the value is being truncated. Sometimes the letter part will be removed especially where the value start with numbers.
+
+
+--------------------------
+Changes in the Sales Quotation/Order Report requires definition of zero tax for items without vat or tax
+this should be done in the 

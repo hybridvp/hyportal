@@ -1,0 +1,69 @@
+Hi,
+
+Demo Example:
+
+1) parent.php
+
+<html>
+<head> <title>Parent Window</title>
+<script language=”javascript”>
+window.name = ‘parentWindow’;
+var newPopupWindow;
+function popupLinkOption(url,width,height) {
+newPopupWindow=window.open(url,”childWindow”,”height=”+height+”,width=”+width+”,left=100,top=100,resizable=no,scrollbars=no,toolbar=no,status=no,menubar=no,location=no”);
+}
+</script>
+</head>
+<body>
+Parent File <br />
+<a href=”#” onclick=”popupLinkOption(‘child.php’,200,200);”> Popup </a>
+<?php
+if ($_GET['rId']) {
+echo “<br />Rendom Id –>”.$_GET['rId'];
+}
+?>
+</body>
+</html>
+
+————————————————————————————————
+
+2) child.php
+
+<html>
+<head> <title>Child Window</title>
+<script language=”javascript”>
+function refreshParent() {
+//here window.opener is the parent window from which child window opened.
+parentURL = window.opener.location.href;
+if (parentURL && parentURL != ‘undefined’) {
+//alert(window.opener.location.href + ‘ — ‘ + window.opener.location);
+//alert(window.opener.name);
+parentURLArr = parentURL.split(‘#’);
+
+//find last characters from the string means # as we have href=’#’ in parent window link
+//newStr = parentURL.substring(0, parentURL.length-1);
+//alert(newStr);
+
+parentURLArr1 = parentURLArr[0].split(‘?rId=’);
+//alert(parentURLArr1[0]);
+
+qStr = ‘?rId=’+Math.random(); //random Id added here becuase it will not take page from the browser cache.. sometimes required for some browser.
+
+window.opener.location.href = parentURLArr1[0] + qStr;
+
+//window.opener.location.href = window.opener.location.href; //this also used to refresh the parent window.
+//window.opener.location.reload(); //this also we can add to reload the parent window.
+//window.opener.close(); //parent open closing
+}
+}
+
+function closeChild() {
+window.close();
+}
+</script>
+</head>
+<body onunload=”refreshParent();” >
+Child File <br />
+<a href=”#” onclick=”closeChild();”> Close Child</a>
+</body>
+</html>

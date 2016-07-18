@@ -1,0 +1,15 @@
+version=pmwiki-2.2.0-beta65 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (Windows NT 5.1; rv:2.0b9) Gecko/20100101 Firefox/4.0b9
+author=Laolu Olapegba
+charset=ISO-8859-1
+csum=
+ctime=1296063437
+host=127.0.0.1
+name=Help.SearchOutstandingSalesOrders
+rev=1
+targets=
+text=%0a!!! Purpose%0a%0a%0aDispatch items ready for shipping from a Sales Order in preparation for invoicing.%0a%0a!!! Procedure%0a%0a%0aAfter a Sales Order has been completed, and inventory requirements are satisfied, an order must be set as delivered in order for it to be invoiced. It is a good idea to do the following:%0a%0a    Check each line item is the correct quantity.%0a    Confirm that short-shipped items will be either back ordered or canceled.%0a    Make sure freight being charged is correct. %0a%0aClick Process Dispatch to finish.%0a%0a!!! Tips and Tricks%0a%0a
+time=1296063437
+author:1296063437=Laolu Olapegba
+diff:1296063437:1296063437:=1,19d0%0a%3c %0a%3c !!! Purpose%0a%3c %0a%3c %0a%3c Dispatch items ready for shipping from a Sales Order in preparation for invoicing.%0a%3c %0a%3c !!! Procedure%0a%3c %0a%3c %0a%3c After a Sales Order has been completed, and inventory requirements are satisfied, an order must be set as delivered in order for it to be invoiced. It is a good idea to do the following:%0a%3c %0a%3c     Check each line item is the correct quantity.%0a%3c     Confirm that short-shipped items will be either back ordered or canceled.%0a%3c     Make sure freight being charged is correct. %0a%3c %0a%3c Click Process Dispatch to finish.%0a%3c %0a%3c !!! Tips and Tricks%0a%3c %0a
+host:1296063437=127.0.0.1

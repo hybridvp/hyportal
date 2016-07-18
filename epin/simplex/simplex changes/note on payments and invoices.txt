@@ -1,0 +1,275 @@
+//understanding payments, invoices and allocation data
+
+--outstanding invoices not yet paid
+SELECT
+		trans.type,
+		trans.trans_no,
+		trans.reference,
+		trans.tran_date,
+		debtor.name AS DebtorName, 
+		debtor.curr_code, 
+		ov_amount+ov_gst+ov_freight+ov_freight_tax+ov_discount AS Total,
+                round(ov_amount+ov_gst+ov_freight+ov_freight_tax+ov_discount-alloc,6) AS Outstanding,
+		trans.alloc,
+		trans.due_date,
+		debtor.address,
+		trans.version  FROM 0_debtor_trans trans, 0_debtors_master debtor 
+      WHERE trans.debtor_no=debtor.debtor_no AND round(ov_amount+ov_gst+ov_freight+ov_freight_tax+ov_discount-alloc,6) > 0
+			AND trans.type <> 12
+			AND trans.type <> 2
+			AND trans.type <> 11
+			AND trans.type <> 13
+			AND trans.debtor_no='4'  ORDER BY trans_no
+--SUM OUTSTANDING INVOICES
+SELECT
+    'INVOICE'  type,
+    sum(ov_amount+ov_gst+ov_freight+ov_freight_tax+ov_discount) AS Total,
+    sum(trans.alloc) AS alloc,
+    sum(round(ov_amount+ov_gst+ov_freight+ov_freight_tax+ov_discount-alloc,6)) AS Outstanding
+    FROM 0_debtor_trans  trans
+    WHERE round(ov_amount+ov_gst+ov_freight+ov_freight_tax+ov_discount-alloc,6) > 0
+        AND  trans.type <> 12
+	AND trans.type <> 2
+	AND trans.type <> 11
+	AND trans.type <> 13
+	AND trans.debtor_no='L001'  
+
+
+
+--Unallocated payments OR CREDIT NOTE  
+SELECT
+		trans.type,
+		trans.trans_no,
+		trans.reference,
+		trans.tran_date,
+		debtor.name AS DebtorName, 
+		debtor.curr_code, 
+		ov_amount+ov_gst+ov_freight+ov_freight_tax+ov_discount AS Total,
+		trans.alloc,
+		trans.due_date,
+		debtor.address,
+		trans.version , case when round(ov_amount+ov_gst+ov_freight+ov_freight_tax+ov_discount-alloc,6) <= 0 then 1 else 0 end AS settled  
+FROM 0_debtor_trans trans, 0_debtors_master debtor  
+WHERE (trans.debtor_no=debtor.debtor_no AND (type=12 OR type=11 OR type=2) 
+AND (trans.ov_amount > 0)  AND (round(ov_amount+ov_gst+ov_freight+ov_freight_tax-ov_discount-alloc,6) > 0) 
+AND trans.debtor_no = '4' ) ORDER BY tran_date 
+
+--SUM UNALLOCATED PAYMENTS, CREDIT NOTES AND TYPE=2: WHICH IS NOT KNOWN YET BUT STILL WILL BE USED AS IT WAS FOUND IN THEIR QUERY
+SELECT
+ 'PAYMENT' type,
+  sum(ov_amount+ov_gst+ov_freight+ov_freight_tax+ov_discount) AS Total,
+  sum(trans.alloc) AS Alloc,
+  sum(round(ov_amount+ov_gst+ov_freight+ov_freight_tax+ov_discount-alloc,6)<=0) AS settled
+FROM 0_debtor_trans trans
+WHERE (type=12 OR type=11 OR type=2)
+AND trans.ov_amount > 0  AND round(ov_amount+ov_gst+ov_freight+ov_freight_tax-ov_discount-alloc,6) > 0
+AND trans.debtor_no = 'L001'
+
+ 
+
+
+When Deliveries are not yet invoiced is added to the two query above, then it will give a good picture of what is 
+outstanding 
+--
+SELECT trans.trans_no,
+		debtor.name,
+		branch.branch_code,
+		branch.br_name,
+		sorder.deliver_to,
+		trans.reference,
+		sorder.customer_ref,
+		trans.tran_date,
+		trans.due_date,
+		(ov_amount+ov_gst+ov_freight+ov_freight_tax) AS DeliveryValue,
+		debtor.curr_code,
+		Sum(line.quantity-line.qty_done) AS Outstanding,
+		Sum(line.qty_done) AS Done
+ FROM 0_sales_orders sorder, 0_debtor_trans trans, 0_debtor_trans_details as line, 0_debtors_master debtor, 0_cust_branch  branch
+	  WHERE
+		sorder.order_no = trans.order_ AND
+		trans.debtor_no = debtor.debtor_no
+			AND trans.type = 13
+			AND line.debtor_trans_no = trans.trans_no
+			AND line.debtor_trans_type = trans.type
+			AND trans.branch_code = branch.branch_code
+			AND trans.debtor_no = branch.debtor_no  AND line.qty_done < line.quantity
+      AND trans.debtor_no = '4'
+    
+--Sum outstanding deliveries i.e. sales order delivered but not yet invoiced
+SELECT
+ 'DELIVERY' type ,
+ Sum(ov_amount+ov_gst+ov_freight+ov_freight_tax) AS DeliveryValue,
+ Sum(line.quantity-line.qty_done) AS Outstanding,
+ Sum(line.qty_done) AS Done
+ FROM 0_debtor_trans trans,  0_debtor_trans_details as line
+WHERE line.debtor_trans_no = trans.trans_no
+AND line.debtor_trans_type = trans.type
+AND line.qty_done < line.quantity
+AND trans.type = 13
+AND trans.debtor_no = 'L001'
+
+
+SELECT
+ 'DELIVERY' type ,
+ Sum(ov_amount+ov_gst+ov_freight+ov_freight_tax) AS DeliveryValue,
+ Sum(line.quantity-line.qty_done) AS Outstanding,
+ Sum(line.qty_done) AS Done
+ FROM 0_debtor_trans trans,  0_debtor_trans_details as line
+WHERE line.debtor_trans_no = trans.trans_no
+AND line.debtor_trans_type = trans.type
+AND line.qty_done < line.quantity
+AND trans.type = 13
+AND trans.debtor_no = 'L001'
+
+Confirmed Orders
+SELECT
+	Sum(line.unit_price*line.quantity*(1-line.discount_percent)+freight_cost) AS ordervalue,
+	Sum(line.qty_sent) AS totdelivered,
+	Sum(line.quantity) AS totquantity
+FROM 0_sales_orders sorder, 0_sales_order_details  line
+WHERE sorder.order_no = line.order_no
+		AND sorder.trans_type = line.trans_type
+		AND sorder.trans_type = 30
+		AND line.qty_sent < line.quantity AND ourorder_status= 'Confirmed'
+
+
+1. Transaction Type 10 are invoices.
+2. Transaction Type 12 are payments
+3. 13 are deliveries - version changes from 0 to 1 upon invoicing 
+4. 11 are credit notes 
+5. Type 2 looks like payment but do not know exactly what it is
+
+
+Payment advice
+SELECT order_no, trans_type, debtor_no, name  FROM 0_sales_orders s, 0_debtor_masters m
+where s.debtor_no = m.debtor_no and s.trans_type = 32
+
+///
+You have to consider confirmed order as well in addition to current order being confirmed.
+Sales order has to be checked up to line item to determine outstandin delivery that could be delivered later. If not considered, the credit limit could be exceeded as well.
+
+Deliveries should not be updated
+
+Check out these queries:
+__________________________
+SELECT COUNT(DISTINCT sorder.order_no,
+				sorder.debtor_no,
+				sorder.branch_code,
+				sorder.customer_ref,
+				sorder.ord_date,
+				sorder.deliver_to,
+				sorder.ourorder_status) FROM 0_sales_orders sorder, 0_sales_order_details  line, 0_debtors_master debtor, 0_cust_branch  branch
+	  WHERE (sorder.order_no = line.order_no
+		AND sorder.trans_type = line.trans_type
+		AND sorder.trans_type = 30
+		AND sorder.debtor_no = debtor.debtor_no
+		AND sorder.branch_code = branch.branch_code
+		AND debtor.debtor_no = branch.debtor_no AND sorder.ord_date >= '2010-01-23' AND sorder.ord_date <= '2010-02-23' AND line.qty_sent < line.quantity AND ourorder_status= 'Confirmed')SQL..
+
+SELECT
+		sorder.order_no,
+		sorder.reference,
+		debtor.name,
+		branch.br_name,sorder.customer_ref, sorder.ord_date,
+		sorder.delivery_date,
+		sorder.deliver_to,
+		Sum(line.unit_price*line.quantity*(1-line.discount_percent)+freight_cost) AS ordervalue,
+		sorder.type,
+		debtor.curr_code,
+		sorder.ourorder_status,
+		Sum(line.qty_sent) AS totdelivered,
+		Sum(line.quantity) AS totquantity
+ FROM 0_sales_orders sorder, 0_sales_order_details  line, 0_debtors_master debtor, 0_cust_branch  branch
+	  WHERE (sorder.order_no = line.order_no
+		AND sorder.trans_type = line.trans_type
+		AND sorder.trans_type = 30
+		AND sorder.debtor_no = debtor.debtor_no
+		AND sorder.branch_code = branch.branch_code
+		AND debtor.debtor_no = branch.debtor_no AND sorder.ord_date >= '2010-01-23' AND sorder.ord_date <= '2010-02-23' AND line.qty_sent < line.quantity AND ourorder_status= 'Confirmed') 
+GROUP BY sorder.order_no,
+				sorder.debtor_no,
+				sorder.branch_code,
+				sorder.customer_ref,
+				sorder.ord_date,
+				sorder.deliver_to,
+				sorder.ourorder_status LIMIT 0, 10
+
+----------------------------------------------------------------------------------------------
+SELECT
+	Sum(line.unit_price*line.quantity*(1-line.discount_percent)+freight_cost) AS ordervalue,
+	Sum(line.qty_sent) AS totdelivered,
+	Sum(line.quantity) AS totquantity
+FROM 0_sales_orders sorder, 0_sales_order_details  line
+WHERE sorder.order_no = line.order_no
+		AND sorder.trans_type = line.trans_type
+		AND sorder.trans_type = 30
+		AND line.qty_sent < line.quantity AND ourorder_status= 'Confirmed'
+ 
+GROUP BY sorder.order_no,
+				sorder.debtor_no,
+				sorder.branch_code,
+				sorder.customer_ref,
+				sorder.ord_date,
+				sorder.deliver_to,
+				sorder.ourorder_status LIMIT 0, 10
+
+================================================================================================================
+
+
+DROP TABLE IF EXISTS simplexaccount.0_debtor_trans;
+
+CREATE TABLE  simplexaccount.0_debtor_pay_advice 
+(
+  
+trans_no int(11) unsigned NOT NULL DEFAULT '0',
+  
+type smallint(6) unsigned NOT NULL DEFAULT '0',
+  
+version tinyint(1) unsigned NOT NULL DEFAULT '0',
+  
+debtor_no int(11) unsigned DEFAULT NULL,
+  
+branch_code int(11) NOT NULL DEFAULT '-1',
+  
+tran_date date NOT NULL DEFAULT '0000-00-00',
+  
+due_date date NOT NULL DEFAULT '0000-00-00',
+  
+reference varchar(60) NOT NULL DEFAULT '',
+  
+tpe int(11) NOT NULL DEFAULT '0',
+  
+order_ int(11) NOT NULL DEFAULT '0',
+  
+ov_amount double NOT NULL DEFAULT '0',
+  
+ov_gst double NOT NULL DEFAULT '0',
+  
+ov_freight double NOT NULL DEFAULT '0',
+  
+ov_freight_tax double NOT NULL DEFAULT '0',
+  
+ov_discount double NOT NULL DEFAULT '0',
+  
+alloc double NOT NULL DEFAULT '0',
+  
+rate double NOT NULL DEFAULT '1',
+  
+ship_via int(11) DEFAULT NULL,
+  
+trans_link int(11) NOT NULL DEFAULT '0',
+  
+dimension_id int(11) NOT NULL DEFAULT '0',
+  
+dimension2_id int(11) NOT NULL DEFAULT '0',
+created_by varchar(128),
+
+created_date    datetime,
+approved_by   varchar(128),
+approved_date    datetime, 
+PRIMARY KEY (trans_no,type),
+  
+KEY debtor_no (debtor_no,branch_code)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
